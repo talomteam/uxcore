@@ -87,6 +87,7 @@ variable = variable .. variable_patt:gsub("{v_name}","inbound_call_number"):gsub
 variable = variable .. variable_patt:gsub("{v_name}","outbound_call_number"):gsub("{v_value}",v_outbound_call_number)
 variable = variable .. variable_patt:gsub("{v_name}","inbound_call_name"):gsub("{v_value}",v_inbound_call_name)
 variable = variable .. variable_patt:gsub("{v_name}","restriction"):gsub("{v_value}",v_restrition)
+variable = variable .. variable_patt:gsub("{v_name}","user_context"):gsub("{v_value}","outbound")
 
 data = data:gsub("{variable}",variable)
 param_patt = [[<param name="{p_name}" value="{p_value}"/>
@@ -96,6 +97,8 @@ data = data:gsub("{param}",param)
 
 XML_STRING = data
 print(XML_STRING)
+
+
 
 
 
