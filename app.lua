@@ -1,3 +1,4 @@
+ freeswitch.consoleLog("notice", "SECTION " .. XML_REQUEST["section"] .. "\n")
 If XML_REQUEST['section'] == 'directory' then
   freeswitch.consoleLog("notice",params:serialize())
 end
