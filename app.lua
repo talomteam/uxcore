@@ -3,7 +3,12 @@ if XML_REQUEST == nil then
 end
  freeswitch.consoleLog("notice", XML_REQUEST['section'])
 if XML_REQUEST['section'] == 'directory' then
-  freeswitch.consoleLog("notice",params:serialize())
+    if params:getHeader("action") == "sip_auth" then
+        local directory = require("directory")
+        directory.set(params)
+        XMLSTRING = directory.getXML()
+        --freeswitch.consoleLog("notice",params:serialize())
+    end
 end
 
 if XML_REQUEST['section'] == 'dialplan' then
