@@ -1,14 +1,33 @@
+
 require('lib/configure')
+local directory = {}
 local mongo = require 'mongo'
 local client = mongo.Client 'mongodb://127.0.0.1'
 local collection = client:getCollection('uniXcape-voice','device')
+local req
+function directory.set(creq)
+  req = creq
+end
+function directory.getXML()
+if req == nil then
+    --print("not exits data")
+    local result = [[
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <document type="freeswitch/xml">
+            <section name="result">
+                <result status="not found" />
+            </section>
+        </document> ]]
+    
+    return result
+end
 
-local strquery = [===[
+local strquery = [[
 [
     {
         "$match":
         {
-            "$and":[{"type":{"$ne":"Endpoint"}},{"type":{"$ne":"Phone"}}] 
+            "$and":[{"type":{"$ne":"Endpoint"}},{"type":{"$ne":"Phone"}},{"sip_username":]].. req:getHeader("user")..[[}] 
         }
     },
     {
@@ -22,7 +41,7 @@ local strquery = [===[
     }
 ]
 
-]===]
+]]
 
 local query = mongo.BSON (strquery) 
 local document = collection:aggregate(query)
@@ -37,8 +56,8 @@ if value == nil then
                 <result status="not found" />
             </section>
         </document> ]]
-    XML_STRING = result
-    return
+    
+    return result
 end
   
 local p_username = value.sip_username
@@ -49,9 +68,9 @@ local v_outbound_call_name = value.outbound_call_name
 local v_outbound_call_number = value.outbound_call_number
 local v_restrition = value.restrictionInfo[1].restriction_name
 
-print (v_restrition)
+--print (v_restrition)
 
-directory=[[
+directory_xml = [[
 <?xml version="1.0" encoding="UTF-8"?>
   <document type="freeswitch/xml">
     <section name="directory">
@@ -77,7 +96,7 @@ directory=[[
     </section>
   </document>]]
 
-data = directory:gsub("{domain_name}",IPADDR)
+data = directory_xml:gsub("{domain_name}",req:getHeader("domain"))
 data = data:gsub("{username}",p_username)
 
 variable_patt = [[<variable name="{v_name}" value="{v_value}"/>
@@ -93,10 +112,13 @@ data = data:gsub("{variable}",variable)
 param_patt = [[<param name="{p_name}" value="{p_value}"/>
 ]]
 param = param_patt:gsub("{p_name}","password"):gsub("{p_value}",p_password)
-data = data:gsub("{param}",param)
+result = data:gsub("{param}",param)
 
-XML_STRING = data
-print(XML_STRING)
+return result
+---print(data)
+end
+
+return directory
 
 
 
