@@ -1,6 +1,8 @@
 local http = require("socket.http")
 local ltn12 = require("ltn12")
-local json = require("/lib/json")
+local json = require("lib/json")
+local getHttp = require("lib/gethttp")
+
 if XML_REQUEST == nil then
     return
 end
@@ -8,7 +10,8 @@ end
 if XML_REQUEST['section'] == 'directory' then
     if params:getHeader("action") == "sip_auth" then
         local directory = require("directory")
-        
+        res = json.encode(params)
+        print res
         --freeswitch.consoleLog("notice",params:serialize())
     end
 end
