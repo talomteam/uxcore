@@ -11,7 +11,7 @@ if XML_REQUEST['section'] == 'directory' then
     if params:getHeader("action") == "sip_auth" then
         local directory = require("directory")
         res = json.encode(params)
-        print res
+        print (res)
         --freeswitch.consoleLog("notice",params:serialize())
     end
 end
